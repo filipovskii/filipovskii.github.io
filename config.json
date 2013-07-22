@@ -1,9 +1,9 @@
 {
   "locals": {
-    "url": "http://localhost:8080",
+    "url": "http://filipovskii.github.com",
     "name": "The Wintersmith's blog",
-    "owner": "Andrey Salomatin",
-    "description": "Ramblings of an immor(t)al demigod"
+    "description": "Rock'n'Roll Driven Development",
+    "owner": "Andrey Salomatin"
   },
   "plugins": [
     "./plugins/paginator.coffee"
@@ -21,6 +21,6 @@
     "smartypants": true
   },
   "paginator": {
-    "perPage": 3
+    "perPage": 5
   }
 }

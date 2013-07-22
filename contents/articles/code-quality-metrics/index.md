@@ -70,9 +70,9 @@ Looking at code I ask myself:
 
   First answer should be *NO*, cause everyone working with this code will
   also need to understand how this library works and foreign code may
-  introduce subtle bugs and/or perfomance issues.
+  introduce subtle bugs and/or performance issues.
 
-  Won't it be easier to write something using just standart libs first?
+  Won't it be easier to write something using just standard libs first?
 
   If I'm absolutely sure, I will look through its source and check if it's
   still actively supported by community before adding this library to the
