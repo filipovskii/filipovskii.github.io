@@ -9,7 +9,7 @@ Every programmer instantly measures quality of code, whether it is his
 (her/their?) own masterpiece, or some crap written by a colleague. And
 there are lots of metrics defined by smart people out there, that help you in
 this
-([coherence](http://en.wikipedia.org/wiki/Cohesion_%28computer_science%29),
+([cohesion](http://en.wikipedia.org/wiki/Cohesion_%28computer_science%29),
 [code coverage](http://en.wikipedia.org/wiki/Code_coverage),
 [WTFs/minute](http://www.osnews.com/story/19266/WTFs_m)). Well, I'm no exception, and just recently I've started to think about what am
 I paying attention to in the first place.
@@ -25,7 +25,7 @@ something..
 think about what library to use and how efficient your code is and so on.
 Years spent doing this made me come to a simple conclusion:
 
-I am not smart.
+I am not that smart.
 
 There are people that can handle it much better than me. They can keep in
 mind *stack traces 200 calls long*, name you all *70 functions* of a
@@ -70,7 +70,7 @@ Looking at code I ask myself:
 
   First answer should be *NO*, cause everyone working with this code will
   also need to understand how this library works and foreign code may
-  introduce subtle bugs.
+  introduce subtle bugs and/or perfomance issues.
 
   Won't it be easier to write something using just standart libs first?
 

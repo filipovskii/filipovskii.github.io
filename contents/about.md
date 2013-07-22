@@ -2,20 +2,17 @@
 view: none
 ---
 
-Wintersmith is made by [Johan Nordberg][1] and licensed under the [MIT-license][2].
-This footer text can be edited in about.md
+I am yet another *software engineer*, who likes to ship as fast as
+possible, beautiful code and challenging tasks.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat.
+Look, here I am on [github][1], [twitter][2] and [linkedin][3].
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur.
+Thanks for stopping by! [Mail me][4], if you ought to.
 
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-deserunt mollit anim id est laborum.
+All characters and events in this work – even those based on real people –
+are entirely fictional.
 
-
-[1]: http://johan-nordberg.com
-[2]: http://opensource.org/licenses/MIT
+[1]: https://github.com/filipovskii
+[2]: https://twitter.com/filipovskii
+[3]: http://www.linkedin.com/pub/andrey-salomatin/36/878/113
+[4]: mailto:filipovskii.off@gmail.com

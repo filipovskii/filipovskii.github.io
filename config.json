@@ -2,7 +2,7 @@
   "locals": {
     "url": "http://localhost:8080",
     "name": "The Wintersmith's blog",
-    "owner": "Someone",
+    "owner": "Andrey Salomatin",
     "description": "Ramblings of an immor(t)al demigod"
   },
   "plugins": [
