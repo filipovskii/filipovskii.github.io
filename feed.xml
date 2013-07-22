@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Boris</title>
+    <atom:link href="http://filipovskii.github.com/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <link>http://filipovskii.github.com</link>
+    <description>tech blog by russian guy</description>
+    <pubDate>Sun, 21 Jul 2013 04:00:00 +0400</pubDate>
+    <generator>Wintersmith - https://github.com/jnordberg/wintersmith</generator>
+    <language>en</language>
+    <item>
+      <title>Rethinking DRY and KISS</title>
+      <link>http://filipovskii.github.com/articles/code-quality-metrics/</link>
+      <pubDate>Sun, 21 Jul 2013 04:00:00 +0400</pubDate>
+      <guid isPermaLink="true">http://filipovskii.github.com/articles/code-quality-metrics/</guid>
+      <author></author>
+      <description>&lt;p&gt;Every programmer instantly measures quality of code, whether it is his
+(her/their?) own masterpiece, or some crap written by some other guy. And
+there are lots of metrics defined by smart people out there, that help you
+in this
+(&lt;a href=&quot;http://en.wikipedia.org/wiki/Cohesion_%28computer_science%29&quot;&gt;cohesion&lt;/a&gt;,
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Code_coverage&quot;&gt;code coverage&lt;/a&gt;,
+&lt;a href=&quot;http://www.osnews.com/story/19266/WTFs_m&quot;&gt;WTFs/minute&lt;/a&gt;). Well, I‘m no
+exception, and just recently I’ve started to think about what am I paying
+attention to in the first place.  &lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Turned out, there are just two things, that bother me most of the time:
+&lt;strong&gt;complexity&lt;/strong&gt; and &lt;strong&gt;duplication&lt;/strong&gt;. This is all I need to tell whether code
+I‘m looking at is worth something.. And that’s what &lt;strong&gt;DRY&lt;/strong&gt; (don&amp;#39;t repeat
+yourself) and &lt;strong&gt;KISS&lt;/strong&gt; (keep it super simple) are about.&lt;/p&gt;
+&lt;h2&gt;Complexity&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Writing software is hard!&lt;/em&gt; You have to joggle all this abstract concepts,
+think about what library to use and how efficient your code is and so on.
+Years spent doing this made me come to a simple conclusion:&lt;/p&gt;
+&lt;p&gt;I am not that smart.&lt;/p&gt;
+&lt;p&gt;There are people that can handle it much better than me. They can keep in
+mind &lt;em&gt;stack traces 200 calls long&lt;/em&gt;, name you all &lt;em&gt;70 functions&lt;/em&gt; of a module
+in alphabetical order and tell what is that &lt;em&gt;100 lines of code block&lt;/em&gt; doing
+just by looking at it for 5 secs.&lt;/p&gt;
+&lt;p&gt;I can&amp;#39;t. This things matter to me:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Actual size of code Number of levels of abstraction Number of condition&lt;/li&gt;
+&lt;li&gt;operators Presence of naming conventions Number of third party libraries&lt;/li&gt;
+&lt;li&gt;used A lot more..&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Looking at code I ask myself:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Is the purpose of this function/method/class obvious and &lt;em&gt;unambiguous&lt;/em&gt;?&lt;/p&gt;
+&lt;p&gt;Or should I change its name, signature, remove it, break into several
+smaller peaces, or merge into greater meaningful peace.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Is this level of abstraction necessary? &lt;em&gt;Does it remove any duplication?&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Introducing unnecessary abstractions is, sadly, one of the most favourite
+activities of contemporary programmer. Too many abstractions make code
+harder to understand, debug and …yeah… change. So &lt;a href=&quot;http://pyvideo.org/video/880/stop-writing-classes&quot;&gt;use functions
+instead of classes&lt;/a&gt;,
+lightweight frameworks instead of huge &lt;code&gt;MV(\w*)C&lt;/code&gt; beasts, and no ORMs,
+&lt;em&gt;please&lt;/em&gt;!&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Is it absolutely inevitably to use inheritance? In most cases it adds
+incredible amount of complexity.&lt;/p&gt;
+&lt;p&gt;Should I use composition? Oh look, they even got
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Composition_over_inheritance&quot;&gt;wikipedia&lt;/a&gt;
+article for this..&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Do I &lt;em&gt;need&lt;/em&gt; this third party library here?&lt;/p&gt;
+&lt;p&gt;First answer should be &lt;em&gt;NO&lt;/em&gt;, cause everyone working with this code will
+also need to understand how this library works and foreign code may
+introduce subtle bugs and/or performance issues.&lt;/p&gt;
+&lt;p&gt;Won&amp;#39;t it be easier to write something using just standard libs first?&lt;/p&gt;
+&lt;p&gt;If I‘m absolutely sure, I will look through its source and check if it’s
+still actively supported by community before adding this library to the
+project.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.infoq.com/presentations/Simple-Made-Easy&quot;&gt;“Simple made easy” by Rich
+Hickey&lt;/a&gt; is a great
+source of inspiration for me when it comes to complexity in software. I
+strongly recommend watching it, regardless of your opinion about &lt;em&gt;Closure&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Duplication&lt;/h2&gt;
+&lt;p&gt;Although it seems superficial, &lt;em&gt;code duplication&lt;/em&gt;, in my opinion, is a
+fundamental problem in software engineering. All this complex concepts, such
+as design patterns and programming paradigms serve just one purpose - remove
+duplication from code. That&amp;#39;s it. &lt;em&gt;It is that simple!&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Same or &lt;em&gt;roughly similar&lt;/em&gt; code in several different places is bad. You have
+to keep in mind all these peaces and change them simultaneously. Well…
+you know.&lt;/p&gt;
+&lt;p&gt;I began to realize this mostly after reading some of the books on TDD by
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Kent_Beck&quot;&gt;Kent Beck&lt;/a&gt;, which I again strongly
+recommend.&lt;/p&gt;
+&lt;p&gt;Interesting thing is that there is &lt;em&gt;only one way&lt;/em&gt; to solve this problem of
+similar code. And that is complicating things. &lt;em&gt;What an irony!&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Think about it.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Once I see a duplication (aka &lt;em&gt;reusable behavior&lt;/em&gt;), I abstract it in a
+class or function or module or even whole abstraction layer.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Instead of writing my own implementation of http-protocol (&lt;em&gt;duplicating
+something somebody else wrote&lt;/em&gt;) every time I develop a webapp, I simply
+use a third-party library.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Tradeoff&lt;/h2&gt;
+&lt;p&gt;All I am saying is that without oversimplifying things, &lt;strong&gt;complexity&lt;/strong&gt;
+and &lt;strong&gt;duplication&lt;/strong&gt; are all I really care about in programming.&lt;/p&gt;
+&lt;p&gt;Like most things in the industry, you need to find a tradeoff between those
+two. Removing duplication leads to increasing complexity and vice versa.
+Depending on situation, project, time-performance-[other] constrains I
+prefer one over another. Sometimes I make a decision, that implies some
+duplication, and only if it keeps bothering me, I refactor it later. It&amp;#39;s
+important that &lt;strong&gt;common sense plays the main role in it!&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;“All theory is gray, my friend. But forever green is the tree of life.”&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That‘s why I’m going to write about some cases, where I apply this two
+criterions, in future posts.&lt;/p&gt;
+&lt;p&gt;Till then!&lt;/p&gt;
+</description>
+    </item>
+  </channel>
+</rss>

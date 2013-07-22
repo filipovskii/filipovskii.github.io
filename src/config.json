@@ -5,6 +5,7 @@
     "description": "tech blog by russian guy",
     "owner": "Andrey Salomatin"
   },
+  "output": "../",
   "plugins": [
     "./plugins/paginator.coffee"
   ],

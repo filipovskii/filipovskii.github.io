@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Rethinking DRY and KISS - Boris
+    </title>
+    <link rel="alternate" href="http://filipovskii.github.com/feed.xml" type="application/rss+xml" title="tech blog by russian guy">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="/css/main.css">
+    <script>
+      (function () {
+      
+        function blankTarget() {
+          var hrefs = document.querySelectorAll('article a'),
+              i;
+              
+          for (i = 0; i < hrefs.length; i++) {
+            hrefs[i].target = '_blank';
+          }
+        }
+        
+        window.onload = blankTarget;
+      })();
+      
+    </script>
+  </head>
+  <body class="article-detail">
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Rethinking DRY and KISS</h1>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>Every programmer instantly measures quality of code, whether it is his
+(her/their?) own masterpiece, or some crap written by some other guy. And
+there are lots of metrics defined by smart people out there, that help you
+in this
+(<a href="http://en.wikipedia.org/wiki/Cohesion_%28computer_science%29">cohesion</a>,
+<a href="http://en.wikipedia.org/wiki/Code_coverage">code coverage</a>,
+<a href="http://www.osnews.com/story/19266/WTFs_m">WTFs/minute</a>). Well, I‘m no
+exception, and just recently I’ve started to think about what am I paying
+attention to in the first place.  <span class="more"></span></p>
+<p>Turned out, there are just two things, that bother me most of the time:
+<strong>complexity</strong> and <strong>duplication</strong>. This is all I need to tell whether code
+I‘m looking at is worth something.. And that’s what <strong><span class="caps">DRY</span></strong> (don&#39;t repeat
+yourself) and <strong><span class="caps">KISS</span></strong> (keep it super simple) are&nbsp;about.</p>
+<h2>Complexity</h2>
+<p><em>Writing software is hard!</em> You have to joggle all this abstract concepts,
+think about what library to use and how efficient your code is and so on.
+Years spent doing this made me come to a simple&nbsp;conclusion:</p>
+<p>I am not that&nbsp;smart.</p>
+<p>There are people that can handle it much better than me. They can keep in
+mind <em>stack traces 200 calls long</em>, name you all <em>70 functions</em> of a module
+in alphabetical order and tell what is that <em>100 lines of code block</em> doing
+just by looking at it for 5&nbsp;secs.</p>
+<p>I can&#39;t. This things matter to&nbsp;me:</p>
+<ul>
+<li>Actual size of code Number of levels of abstraction Number of&nbsp;condition</li>
+<li>operators Presence of naming conventions Number of third party&nbsp;libraries</li>
+<li>used A lot&nbsp;more..</li>
+</ul>
+<p>Looking at code I ask&nbsp;myself:</p>
+<ul>
+<li><p>Is the purpose of this function/method/class obvious and <em>unambiguous</em>?</p>
+<p>Or should I change its name, signature, remove it, break into several
+smaller peaces, or merge into greater meaningful&nbsp;peace.</p>
+</li>
+<li><p>Is this level of abstraction necessary? <em>Does it remove any&nbsp;duplication?</em></p>
+<p>Introducing unnecessary abstractions is, sadly, one of the most favourite
+activities of contemporary programmer. Too many abstractions make code
+harder to understand, debug and …yeah… change. So <a href="http://pyvideo.org/video/880/stop-writing-classes">use functions
+instead of classes</a>,
+lightweight frameworks instead of huge <code>MV(\w*)C</code> beasts, and no ORMs,
+<em>please</em>!</p>
+</li>
+<li><p>Is it absolutely inevitably to use inheritance? In most cases it adds
+incredible amount of&nbsp;complexity.</p>
+<p>Should I use composition? Oh look, they even got
+<a href="http://en.wikipedia.org/wiki/Composition_over_inheritance">wikipedia</a>
+article for&nbsp;this..</p>
+</li>
+<li><p>Do I <em>need</em> this third party library&nbsp;here?</p>
+<p>First answer should be <em><span class="caps">NO</span></em>, cause everyone working with this code will
+also need to understand how this library works and foreign code may
+introduce subtle bugs and/or performance&nbsp;issues.</p>
+<p>Won&#39;t it be easier to write something using just standard libs&nbsp;first?</p>
+<p>If I‘m absolutely sure, I will look through its source and check if it’s
+still actively supported by community before adding this library to the&nbsp;project.</p>
+</li>
+</ul>
+<p><a href="http://www.infoq.com/presentations/Simple-Made-Easy">“Simple made easy” by Rich
+Hickey</a> is a great
+source of inspiration for me when it comes to complexity in software. I
+strongly recommend watching it, regardless of your opinion about <em>Closure</em>.</p>
+<h2>Duplication</h2>
+<p>Although it seems superficial, <em>code duplication</em>, in my opinion, is a
+fundamental problem in software engineering. All this complex concepts, such
+as design patterns and programming paradigms serve just one purpose - remove
+duplication from code. That&#39;s it. <em>It is that&nbsp;simple!</em></p>
+<p>Same or <em>roughly similar</em> code in several different places is bad. You have
+to keep in mind all these peaces and change them simultaneously. Well…
+you&nbsp;know.</p>
+<p>I began to realize this mostly after reading some of the books on <span class="caps">TDD</span> by
+<a href="http://en.wikipedia.org/wiki/Kent_Beck">Kent Beck</a>, which I again strongly&nbsp;recommend.</p>
+<p>Interesting thing is that there is <em>only one way</em> to solve this problem of
+similar code. And that is complicating things. <em>What an&nbsp;irony!</em></p>
+<p>Think about&nbsp;it.</p>
+<ul>
+<li><p>Once I see a duplication (aka <em>reusable behavior</em>), I abstract it in a
+class or function or module or even whole abstraction&nbsp;layer.</p>
+</li>
+<li><p>Instead of writing my own implementation of http-protocol (<em>duplicating
+something somebody else wrote</em>) every time I develop a webapp, I simply
+use a third-party&nbsp;library.</p>
+</li>
+</ul>
+<h2>Tradeoff</h2>
+<p>All I am saying is that without oversimplifying things, <strong>complexity</strong>
+and <strong>duplication</strong> are all I really care about in&nbsp;programming.</p>
+<p>Like most things in the industry, you need to find a tradeoff between those
+two. Removing duplication leads to increasing complexity and vice versa.
+Depending on situation, project, time-performance-[other] constrains I
+prefer one over another. Sometimes I make a decision, that implies some
+duplication, and only if it keeps bothering me, I refactor it later. It&#39;s
+important that <strong>common sense plays the main role in&nbsp;it!</strong></p>
+<pre><code>“All theory is gray, my friend. But forever green is the tree of life.”</code></pre>
+<p>That‘s why I’m going to write about some cases, where I apply this two
+criterions, in future&nbsp;posts.</p>
+<p>Till&nbsp;then!</p>
+</section>
+        </article>
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+          var disqus_shortname = 'filipovskiiblog';
+          (function() {
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          
+        </script>
+        <noscript>
+          <Please>enable JavaScript to view the</Please><a href="http://disqus.com/?ref_noscript">
+            <comments>powered by Disqus.</comments></a>
+        </noscript><a href="http://disqus.com" class="dsq-brlink">comments powered by<span class="logo-disqus">
+            <Disqus></Disqus></span></a>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/">« Full blog</a></div>
+        <section class="about"><p>I am yet another <em>software engineer</em>, who likes to ship as fast as
+possible, beautiful code and challenging tasks.</p>
+<p>Look, here I am on <a href="https://github.com/filipovskii">github</a>, <a href="https://twitter.com/filipovskii">twitter</a> and <a href="http://www.linkedin.com/pub/andrey-salomatin/36/878/113">linkedin</a>.</p>
+<p>Thanks for stopping by! <a href="mailto:filipovskii.off@gmail.com">Mail me</a>, if you ought to.</p>
+<p>All characters and events in this work – even those based on real people –
+are entirely fictional.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2013 Andrey Salomatin &mdash; powered by&nbsp;<a href="https://github.com/jnordberg/wintersmith">Wintersmith</a>
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>
