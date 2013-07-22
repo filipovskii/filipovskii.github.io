@@ -1,8 +1,8 @@
 {
   "locals": {
     "url": "http://filipovskii.github.com",
-    "name": "The Wintersmith's blog",
-    "description": "Rock'n'Roll Driven Development",
+    "name": "Boris",
+    "description": "tech blog by russian guy",
     "owner": "Andrey Salomatin"
   },
   "plugins": [
