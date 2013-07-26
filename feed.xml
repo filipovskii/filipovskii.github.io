@@ -36,11 +36,20 @@ Years spent doing this made me come to a simple conclusion:&lt;/p&gt;
 mind &lt;em&gt;stack traces 200 calls long&lt;/em&gt;, name you all &lt;em&gt;70 functions&lt;/em&gt; of a module
 in alphabetical order and tell what is that &lt;em&gt;100 lines of code block&lt;/em&gt; doing
 just by looking at it for 5 secs.&lt;/p&gt;
-&lt;p&gt;I can&amp;#39;t. This things matter to me:&lt;/p&gt;
+&lt;p&gt;I can&amp;#39;t. These things matter to me:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Actual size of code Number of levels of abstraction Number of condition&lt;/li&gt;
-&lt;li&gt;operators Presence of naming conventions Number of third party libraries&lt;/li&gt;
-&lt;li&gt;used A lot more..&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Actual size of code&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Number of levels of abstraction&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Number of condition operators&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Presence of naming conventions&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Number of third party libraries used&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A lot more..&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Looking at code I ask myself:&lt;/p&gt;
 &lt;ul&gt;
@@ -102,12 +111,13 @@ use a third-party library.&lt;/p&gt;
 &lt;h2&gt;Tradeoff&lt;/h2&gt;
 &lt;p&gt;All I am saying is that without oversimplifying things, &lt;strong&gt;complexity&lt;/strong&gt;
 and &lt;strong&gt;duplication&lt;/strong&gt; are all I really care about in programming.&lt;/p&gt;
-&lt;p&gt;Like most things in the industry, you need to find a tradeoff between those
-two. Removing duplication leads to increasing complexity and vice versa.
-Depending on situation, project, time-performance-[other] constrains I
-prefer one over another. Sometimes I make a decision, that implies some
-duplication, and only if it keeps bothering me, I refactor it later. It&amp;#39;s
-important that &lt;strong&gt;common sense plays the main role in it!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Like most things in the industry, you need to find a tradeoff between
+those two. Removing duplication leads to increasing complexity and
+sometimes vice versa.  Depending on situation, project,
+time-performance-[other] constrains I prefer one over another. Sometimes I
+make a decision, that implies some duplication, and only if it keeps
+bothering me, I refactor it later. It&amp;#39;s important that &lt;strong&gt;common sense
+plays the main role in it!&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;“All theory is gray, my friend. But forever green is the tree of life.”&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;That‘s why I’m going to write about some cases, where I apply this two
 criterions, in future posts.&lt;/p&gt;

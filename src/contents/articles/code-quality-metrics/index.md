@@ -33,11 +33,19 @@ mind *stack traces 200 calls long*, name you all *70 functions* of a module
 in alphabetical order and tell what is that *100 lines of code block* doing
 just by looking at it for 5 secs.
 
-I can't. This things matter to me:
+I can't. These things matter to me:
 
-* Actual size of code Number of levels of abstraction Number of condition
-* operators Presence of naming conventions Number of third party libraries
-* used A lot more..
+* Actual size of code
+
+* Number of levels of abstraction
+
+* Number of condition operators
+
+* Presence of naming conventions
+
+* Number of third party libraries used
+
+* A lot more..
 
 Looking at code I ask myself:
 
@@ -112,12 +120,13 @@ Think about it.
 All I am saying is that without oversimplifying things, **complexity**
 and **duplication** are all I really care about in programming.
 
-Like most things in the industry, you need to find a tradeoff between those
-two. Removing duplication leads to increasing complexity and vice versa.
-Depending on situation, project, time-performance-[other] constrains I
-prefer one over another. Sometimes I make a decision, that implies some
-duplication, and only if it keeps bothering me, I refactor it later. It's
-important that **common sense plays the main role in it!**
+Like most things in the industry, you need to find a tradeoff between
+those two. Removing duplication leads to increasing complexity and
+sometimes vice versa.  Depending on situation, project,
+time-performance-[other] constrains I prefer one over another. Sometimes I
+make a decision, that implies some duplication, and only if it keeps
+bothering me, I refactor it later. It's important that **common sense
+plays the main role in it!**
 
     “All theory is gray, my friend. But forever green is the tree of life.”
 
