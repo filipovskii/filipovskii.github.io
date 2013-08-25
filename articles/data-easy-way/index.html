@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Storing data, the easy way - Boris
+    </title>
+    <link rel="alternate" href="http://filipovskii.github.com/feed.xml" type="application/rss+xml" title="tech blog by russian guy">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="/css/main.css">
+    <script>
+      (function () {
+      
+        function blankTarget() {
+          var hrefs = document.querySelectorAll('article a'),
+              i;
+              
+          for (i = 0; i < hrefs.length; i++) {
+            hrefs[i].target = '_blank';
+          }
+        }
+        
+        window.onload = blankTarget;
+      })();
+      
+    </script>
+  </head>
+  <body class="article-detail">
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Storing data, the easy way</h1>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>Choosing appropriate data storage is one of the first and most important
+decisions you have to face once you&#39;ve started implementing an application
+(at least in web or mobile world). There are lots of possibilities out
+there, <span class="caps">SQL</span> and NoSQL, documents and objects and graphs and tables and
+whatnot. But I want to talk about those cases, when a fully-featured
+database for storing your data may be either not enough or too much.
+<span class="more"></span></p>
+<p>To be clear, by database I mean <a href="http://en.wikipedia.org/wiki/Database"><span class="caps">DBMS</span></a> or database management
+system, and by data storage I mean any organized representation of your&nbsp;data.</p>
+<h2><span class="caps">RAM</span></h2>
+<p>That&#39;s pretty obvious. You need to store non-critical data and have fast
+access to it &mdash; use <span class="caps">RAM</span>. Classical use cases&nbsp;include:</p>
+<ul>
+<li><p>Mock storage for unit&nbsp;tests</p>
+<p>Instead of running your tests using real database, sometimes it&#39;s
+easier to mock storage using some build-in collections like lists,
+dictionaries (aka maps)&nbsp;etc.</p>
+<p>It forces you to write database-agnostic code, isolate storage
+interaction and concentrate on application logic. Which is a good
+thing,&nbsp;obviously.</p>
+<p>Here is an example of a simple mock in&nbsp;javascript:</p>
+<pre><code class="lang-javascript">
+    <span class="keyword">var</span> users = {}; <span class="comment">// fill this with mock data</span>
+
+    <span class="function"><span class="keyword">function</span> <span class="title">getUserById</span><span class="params">(id)</span> {</span>
+      <span class="keyword">return</span> users[id];
+    }</code></pre>
+</li>
+</ul>
+<ul>
+<li><p>Cache</p>
+<p>Instead of reading often used data from disk all the time, cache it in
+memory! It is fast and nothing inevitable can happen once your app
+unexpectedly shut&nbsp;down.</p>
+<p>I use it a lot. In the most recent project, I&#39;ve been working on, all
+the vital data gets loaded into cache in <span class="caps">RAM</span> on application start up
+and is updated in cache first, before any changes get stored to&nbsp;disk.</p>
+</li>
+<li><p>Pre-aggregation</p>
+<p>Suppose you need to track page views on popular site&hellip; all of
+them. That&#39;s a lot of data. Writing each page view to disk real-time
+will certainly lead to performance&nbsp;issues.</p>
+<p>It is possible to improve performance by storing data in <span class="caps">RAM</span> first,
+and flushing it to disk every now and then. To optimize even more in
+case you need to track just certain parameters (e.g. User-Agent),
+pre-aggregate data based on those and then flush&nbsp;it:</p>
+<pre><code>Chrome    300 visits
+Firefox   220 visits</code></pre>
+<p>There is a chance of losing data, while it is not on the disk. That&#39;s
+a price you have to pay for performance. Think about how much data you
+can afford to loose and tweak <em>period in which flushing occurs</em>&nbsp;accordingly.</p>
+<p><a href="http://heymoose.com/">Heymoose</a>, advertising platform I was working on,
+uses this tactics to store ad shows and&nbsp;clicks.</p>
+</li>
+</ul>
+<p>Of course there are more possible use cases. The general idea is: “If
+you want to keep things simple and you&#39;re not afraid to loose data up
+to some point, <span class="caps">RAM</span> is a great easy-to-use storage available out of (your
+favourite language)&nbsp;box.”</p>
+<h2>Files</h2>
+<p>This is <em>the most underestimated storage</em> in web development of all time.
+I think it all began with <a href="http://en.wikipedia.org/wiki/LAMP_(software_bundle)"><span class="caps">LAMP</span></a>. <em>MySQL</em> became a minimum
+requirement for building a website, thus the simplest, fastest and
+sometimes even more reliable storage&nbsp;forgotten&hellip;</p>
+<p><em>Plain-text files</em> can be used for lots of stuff, although there are
+certain use cases, when they are simply the best fit for the&nbsp;job:</p>
+<ul>
+<li><p>Log-like&nbsp;data</p>
+<p>Access logs, error logs, debug logs &mdash; this is a huge amount of
+important data. Applications do not tend to use <em><span class="caps">DBMS</span></em> for this. It&#39;s
+simpler and faster to write to files.  And, most importantly, it
+<em>reduces the number of levels of complexity</em>.</p>
+<p>In the past I was working on <a href="http://en.wikipedia.org/wiki/Financial_Information_eXchange"><span class="caps">FIX</span></a> traffic analyser tool. The
+low level part of this project was written in C and was responsible
+for capturing and writing <span class="caps">FIX</span> messages into rotated log. High level
+part was providing a fancy web interface for searching and analyzing
+those&nbsp;messages.</p>
+<p>Amount of data was huge, <span class="caps">DBMS</span> would require lots of resources to
+handle it. With files (in conjunction with with pre-aggregation) it
+became&nbsp;possible.</p>
+<p>Indexing and searching through this data was implemented with
+<a href="http://www.elasticsearch.org/">ElasticSearch</a>. It all worked like a&nbsp;charm!</p>
+</li>
+<li><p>Replacement for a database with a simple&nbsp;structure</p>
+<p>For prototypes, tests or even working apps, it is possible to use
+files to store your data like you would use a&nbsp;database:</p>
+<pre><code>db
+├── painters
+│   ├── k.malevich@square.io.json
+│   ├── r.falk@msk.ru.json
+│   └── v.kandinsky@circles.ru.json
+└── paintings
+    ├── black-square.json
+    ├── moscow-I.json
+    └── portrait-of-a-tatar-journalist-midhat-refatov.json</code></pre>
+</li>
+</ul>
+<p>Working with files in high-level languages is fun and easy. Considering
+<a href="http://en.wikipedia.org/wiki/Page_cache">caching</a>, <a href="http://en.wikipedia.org/wiki/Epoll">epoll</a> and other cool options, it can also
+be very efficient and&nbsp;convenient.</p>
+<h2>To&nbsp;summarize</h2>
+<p>Storing your data is not only about MySQL, PostgreSQL, MongoDB etc. Very
+often compound solutions may lead to cleaner code, higher performance and
+flexibility. And sometimes you don&#39;t even need fully-featured <span class="caps">DBMS</span> at&nbsp;all.</p>
+<p>Use programs that do one thing and do it well. Use programs to work&nbsp;together.</p>
+</section>
+        </article>
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+          var disqus_shortname = 'filipovskiiblog';
+          (function() {
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          
+        </script>
+        <noscript>
+          <Please>enable JavaScript to view the</Please><a href="http://disqus.com/?ref_noscript">
+            <comments>powered by Disqus.</comments></a>
+        </noscript><a href="http://disqus.com" class="dsq-brlink">comments powered by<span class="logo-disqus">
+            <Disqus></Disqus></span></a>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/">« Full blog</a></div>
+        <section class="about"><p>I am yet another <em>software engineer</em>, who likes to ship as fast as
+possible, beautiful code and challenging tasks.</p>
+<p>Look, here I am on <a href="https://github.com/filipovskii">github</a>, <a href="https://twitter.com/filipovskii">twitter</a> and <a href="http://www.linkedin.com/pub/andrey-salomatin/36/878/113">linkedin</a>.</p>
+<p>Thanks for stopping by! <a href="mailto:filipovskii.off@gmail.com">Mail me</a>, if you ought to.</p>
+<p>All characters and events in this work – even those based on real people –
+are entirely fictional.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2013 Andrey Salomatin &mdash; powered by&nbsp;<a href="https://github.com/jnordberg/wintersmith">Wintersmith</a>
+          </p>
+        </section>
+      </div>
+    </footer>
+    <script>
+      var _gaq=[['_setAccount','UA-21702849-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+  </body>
+</html>

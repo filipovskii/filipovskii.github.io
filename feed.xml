@@ -5,9 +5,125 @@
     <atom:link href="http://filipovskii.github.com/feed.xml" rel="self" type="application/rss+xml"></atom:link>
     <link>http://filipovskii.github.com</link>
     <description>tech blog by russian guy</description>
-    <pubDate>Sun, 21 Jul 2013 04:00:00 +0400</pubDate>
+    <pubDate>Sun, 25  Aug 2013 04:00:00 +0400</pubDate>
     <generator>Wintersmith - https://github.com/jnordberg/wintersmith</generator>
     <language>en</language>
+    <item>
+      <title>Storing data, the easy way</title>
+      <link>http://filipovskii.github.com/articles/data-easy-way/</link>
+      <pubDate>Sun, 25  Aug 2013 04:00:00 +0400</pubDate>
+      <guid isPermaLink="true">http://filipovskii.github.com/articles/data-easy-way/</guid>
+      <author></author>
+      <description>&lt;p&gt;Choosing appropriate data storage is one of the first and most important
+decisions you have to face once you&amp;#39;ve started implementing an application
+(at least in web or mobile world). There are lots of possibilities out
+there, SQL and NoSQL, documents and objects and graphs and tables and
+whatnot. But I want to talk about those cases, when a fully-featured
+database for storing your data may be either not enough or too much.
+&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;To be clear, by database I mean &lt;a href=&quot;http://en.wikipedia.org/wiki/Database&quot;&gt;DBMS&lt;/a&gt; or database management
+system, and by data storage I mean any organized representation of your
+data.&lt;/p&gt;
+&lt;h2&gt;RAM&lt;/h2&gt;
+&lt;p&gt;That&amp;#39;s pretty obvious. You need to store non-critical data and have fast
+access to it &amp;mdash; use RAM. Classical use cases include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Mock storage for unit tests&lt;/p&gt;
+&lt;p&gt;Instead of running your tests using real database, sometimes it&amp;#39;s
+easier to mock storage using some build-in collections like lists,
+dictionaries (aka maps) etc.&lt;/p&gt;
+&lt;p&gt;It forces you to write database-agnostic code, isolate storage
+interaction and concentrate on application logic. Which is a good
+thing, obviously.&lt;/p&gt;
+&lt;p&gt;Here is an example of a simple mock in javascript:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-javascript&quot;&gt;
+    &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; users = {}; &lt;span class=&quot;comment&quot;&gt;// fill this with mock data&lt;/span&gt;
+
+    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;getUserById&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(id)&lt;/span&gt; {&lt;/span&gt;
+      &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; users[id];
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Cache&lt;/p&gt;
+&lt;p&gt;Instead of reading often used data from disk all the time, cache it in
+memory! It is fast and nothing inevitable can happen once your app
+unexpectedly shut down.&lt;/p&gt;
+&lt;p&gt;I use it a lot. In the most recent project, I&amp;#39;ve been working on, all
+the vital data gets loaded into cache in RAM on application start up
+and is updated in cache first, before any changes get stored to disk.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pre-aggregation&lt;/p&gt;
+&lt;p&gt;Suppose you need to track page views on popular site&amp;hellip; all of
+them. That&amp;#39;s a lot of data. Writing each page view to disk real-time
+will certainly lead to performance issues.&lt;/p&gt;
+&lt;p&gt;It is possible to improve performance by storing data in RAM first,
+and flushing it to disk every now and then. To optimize even more in
+case you need to track just certain parameters (e.g. User-Agent),
+pre-aggregate data based on those and then flush it:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Chrome    300 visits
+Firefox   220 visits&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There is a chance of losing data, while it is not on the disk. That&amp;#39;s
+a price you have to pay for performance. Think about how much data you
+can afford to loose and tweak &lt;em&gt;period in which flushing occurs&lt;/em&gt;
+accordingly.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://heymoose.com/&quot;&gt;Heymoose&lt;/a&gt;, advertising platform I was working on,
+uses this tactics to store ad shows and clicks.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Of course there are more possible use cases. The general idea is: “If
+you want to keep things simple and you&amp;#39;re not afraid to loose data up
+to some point, RAM is a great easy-to-use storage available out of (your
+favourite language) box.”&lt;/p&gt;
+&lt;h2&gt;Files&lt;/h2&gt;
+&lt;p&gt;This is &lt;em&gt;the most underestimated storage&lt;/em&gt; in web development of all time.
+I think it all began with &lt;a href=&quot;http://en.wikipedia.org/wiki/LAMP_(software_bundle)&quot;&gt;LAMP&lt;/a&gt;. &lt;em&gt;MySQL&lt;/em&gt; became a minimum
+requirement for building a website, thus the simplest, fastest and
+sometimes even more reliable storage forgotten&amp;hellip;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Plain-text files&lt;/em&gt; can be used for lots of stuff, although there are
+certain use cases, when they are simply the best fit for the job:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Log-like data&lt;/p&gt;
+&lt;p&gt;Access logs, error logs, debug logs &amp;mdash; this is a huge amount of
+important data. Applications do not tend to use &lt;em&gt;DBMS&lt;/em&gt; for this. It&amp;#39;s
+simpler and faster to write to files.  And, most importantly, it
+&lt;em&gt;reduces the number of levels of complexity&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;In the past I was working on &lt;a href=&quot;http://en.wikipedia.org/wiki/Financial_Information_eXchange&quot;&gt;FIX&lt;/a&gt; traffic analyser tool. The
+low level part of this project was written in C and was responsible
+for capturing and writing FIX messages into rotated log. High level
+part was providing a fancy web interface for searching and analyzing
+those messages.&lt;/p&gt;
+&lt;p&gt;Amount of data was huge, DBMS would require lots of resources to
+handle it. With files (in conjunction with with pre-aggregation) it
+became possible.&lt;/p&gt;
+&lt;p&gt;Indexing and searching through this data was implemented with
+&lt;a href=&quot;http://www.elasticsearch.org/&quot;&gt;ElasticSearch&lt;/a&gt;. It all worked like a charm!&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Replacement for a database with a simple structure&lt;/p&gt;
+&lt;p&gt;For prototypes, tests or even working apps, it is possible to use
+files to store your data like you would use a database:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;db
+├── painters
+│   ├── k.malevich@square.io.json
+│   ├── r.falk@msk.ru.json
+│   └── v.kandinsky@circles.ru.json
+└── paintings
+    ├── black-square.json
+    ├── moscow-I.json
+    └── portrait-of-a-tatar-journalist-midhat-refatov.json&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Working with files in high-level languages is fun and easy. Considering
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Page_cache&quot;&gt;caching&lt;/a&gt;, &lt;a href=&quot;http://en.wikipedia.org/wiki/Epoll&quot;&gt;epoll&lt;/a&gt; and other cool options, it can also
+be very efficient and convenient.&lt;/p&gt;
+&lt;h2&gt;To summarize&lt;/h2&gt;
+&lt;p&gt;Storing your data is not only about MySQL, PostgreSQL, MongoDB etc. Very
+often compound solutions may lead to cleaner code, higher performance and
+flexibility. And sometimes you don&amp;#39;t even need fully-featured DBMS at all.&lt;/p&gt;
+&lt;p&gt;Use programs that do one thing and do it well. Use programs to work
+together.&lt;/p&gt;
+</description>
+    </item>
     <item>
       <title>Rethinking DRY and KISS</title>
       <link>http://filipovskii.github.com/articles/code-quality-metrics/</link>
