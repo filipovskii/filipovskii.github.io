@@ -1,4 +1,4 @@
 ## Test
 
-  $ npm install -g mocha
-  $ mocha
+    $ npm install -g mocha
+    $ mocha
