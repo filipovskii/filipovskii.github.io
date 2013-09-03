@@ -1,0 +1,14 @@
+{
+  "name": "tdd-state-vs-history",
+  "version": "0.0.0",
+  "description": "Code example for article.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "underscore": "1.5.x"
+  },
+  "author": "filipovsky",
+  "license": "BSD-2-Clause"
+}
