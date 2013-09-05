@@ -10,9 +10,6 @@ describe('Game implemented via history', function () {
   });
 
   it('has initial state of `new`', function () {
-    var userId = 1,
-        gameId = 1;
-
     assert(game.isNew(userId, gameId));
   });
 
@@ -50,9 +47,6 @@ describe('Game implemented via state', function () {
   });
 
   it('has initial state of `new`', function () {
-    var userId = 1,
-        gameId = 1;
-
     assert(game.isNew(userId, gameId));
   });
 
