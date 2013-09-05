@@ -49,6 +49,11 @@ function isWon(userId, gameId) {
 }
 
 
+function lose(userId, gameId) {
+  state[userId] = state[userId] || {};
+  state[userId][gameId] = 'lost';
+}
+
 function start(userId, gameId) {
   state[userId] = state[userId] || {};
   state[userId][gameId] = 'started';
