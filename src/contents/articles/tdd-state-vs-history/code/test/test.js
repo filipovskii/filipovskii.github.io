@@ -52,4 +52,11 @@ describe('Game implemented via state', function () {
     assert.ok(game.isNew(userId, gameId));
   });
 
+  it('changes to `started` on game start', function () {
+    game.start(userId, gameId);
+
+    assert.ok(game.isStarted(userId, gameId));
+    assert.ok(!game.isNew(userId, gameId));
+  });
+
 });
