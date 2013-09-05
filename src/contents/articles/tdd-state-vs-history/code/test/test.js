@@ -39,3 +39,17 @@ describe('Game implemented via history', function () {
   });
 
 });
+
+describe('Game implemented via state', function () {
+  var game = require('../game-state'),
+      userId = 1,
+      gameId = 1;
+
+  it('has initial state of `new`', function () {
+    var userId = 1,
+        gameId = 1;
+
+    assert.ok(game.isNew(userId, gameId));
+  });
+
+});
