@@ -394,7 +394,7 @@ More examples of tests in javascript are on github:
 That's it, thanks for your time!
 
 
-[code]: https://github.com/filipovskii/filipovskii.github.io/tree/article/tdd-state-vs-history/src/contents/articles/tdd-state-vs-history/code
+[code]: https://github.com/filipovskii/filipovskii.github.io/tree/master/src/contents/articles/tdd-state-vs-history/code
 [express]: https://github.com/visionmedia/express/tree/master/test
 [TDD]: http://en.wikipedia.org/wiki/Test-driven_development
 [Kent Beck]: http://www.amazon.com/Test-Driven-Development-By-Example/dp/0321146530/ref=sr_1_1?ie=UTF8&qid=1378370467&sr=8-1&keywords=kent+beck+test+driven+development+by+example

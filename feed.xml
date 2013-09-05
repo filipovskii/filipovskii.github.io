@@ -294,7 +294,7 @@ Especially when it comes to implementing something with unclear
 requirements. And it is great to use &lt;strong&gt;state impl&lt;/strong&gt; solutions for
 caching purposes in case you are not satisfied with &lt;code&gt;O(e)&lt;/code&gt; time of check
 state.&lt;/p&gt;
-&lt;p&gt;You can find the code for this article &lt;a href=&quot;https://github.com/filipovskii/filipovskii.github.io/tree/article/tdd-state-vs-history/src/contents/articles/tdd-state-vs-history/code&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can find the code for this article &lt;a href=&quot;https://github.com/filipovskii/filipovskii.github.io/tree/master/src/contents/articles/tdd-state-vs-history/code&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;More examples of tests in javascript are on github:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/visionmedia/express/tree/master/test&quot;&gt;express&lt;/a&gt;&lt;/li&gt;
