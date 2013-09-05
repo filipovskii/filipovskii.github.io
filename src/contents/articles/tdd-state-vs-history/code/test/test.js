@@ -1,8 +1,8 @@
-var assert = require('assert'),
-    game = require('../game');
+var assert = require('assert');
 
-describe('Game state', function () {
-  var userId = 1,
+describe('Game implemented via history', function () {
+  var game = require('../game-history'),
+      userId = 1,
       gameId = 1;
 
   beforeEach(function () {
