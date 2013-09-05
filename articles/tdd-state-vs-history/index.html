@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>JS TDD session: State vs. History - Boris
+    </title>
+    <link rel="alternate" href="http://filipovskii.github.com/feed.xml" type="application/rss+xml" title="tech blog by russian guy">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="/css/main.css">
+    <script>
+      (function () {
+      
+        function blankTarget() {
+          var hrefs = document.querySelectorAll('article a'),
+              i;
+              
+          for (i = 0; i < hrefs.length; i++) {
+            hrefs[i].target = '_blank';
+          }
+        }
+        
+        window.onload = blankTarget;
+      })();
+      
+    </script>
+  </head>
+  <body class="article-detail">
+    <header class="header">
+      <div class="content-wrap">
+        <h1>JS TDD session: State vs. History</h1>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>Things change over time. They evolve, mutate and regress throughout once
+life cycle. Today I want to talk about keeping track of those changes, by
+comparing two most common techniques: <em>state objects</em> and <em>history</em>.
+<span class="more"/></p>
+<p>This post will be in a form of <span class="caps">TDD</span> session. First I will state a problem
+and write a test for it, then try to solve it by writing implementation.
+I will use the same approach as in my everyday job. All code will be in&nbsp;javascript.</p>
+<h2>Prerequisites</h2>
+<p>Before we dive into the coding process, here are tools I&#39;ll be using:
+<a href="http://nodejs.org/">node.js</a>, <a href="http://underscorejs.org/">underscore</a>, and <a href="http://mocha.com/">mocha</a> for testing.
+If you&#39;re not familiar with <em>mocha</em> yet, you should probably take a quick
+look <a href="http://mocha.com/">here</a>. If you don&#39;t know much about <em>node</em> or <em>underscore</em>,
+but are comfortable with <em>javascript</em>, it&#39;s not a big deal, but I
+definitely recommend to check it&nbsp;out.</p>
+<p>You should also be familiar with <a href="http://en.wikipedia.org/wiki/Test-driven_development"><span class="caps">TDD</span></a>. There are lots of good books
+and articles on this subject. <a href="http://www.amazon.com/Test-Driven-Development-By-Example/dp/0321146530/ref=sr_1_1?ie=UTF8&amp;qid=1378370467&amp;sr=8-1&amp;keywords=kent+beck+test+driven+development+by+example">Test Driven Development by Example</a> is great to start&nbsp;with.</p>
+<h2>Task</h2>
+<p>Suppose you are implementing an app where user can play different games.
+Each game has an id and a state you need to keep track of. Suppose game
+can be <strong>started</strong>, <strong>won</strong> or <strong>lost</strong> (both last states also mean it is
+<strong>finished</strong>). Initial state of a game, before user interactions, is
+<strong>new</strong>.</p>
+<h2>Project&nbsp;structure:</h2>
+<pre><code>.
+├── README.markdown
+├── game-history.js     -&gt; *history*  implementation
+├── game-state.js       -&gt; *state*    implementation
+├── node_modules
+│   └── underscore
+│       └── ...
+├── package.json
+└── test
+    └── test.js         -&gt; test suite</code></pre>
+<h2>State&nbsp;implementation</h2>
+<p>First we will deal with <strong>state implementation</strong>. Initial assumption is
+before any user interaction, game should be <strong>new</strong>. Here is a test for&nbsp;that:</p>
+<pre><code class="lang-javascript">
+  <span class="comment">// ./test/test.js</span>
+
+  <span class="keyword">var</span> assert = require(<span class="string">'assert'</span>);
+
+  describe(<span class="string">'Game implemented via state'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    <span class="keyword">var</span> game = require(<span class="string">'../game-state'</span>),
+        userId = <span class="number">1</span>,
+        gameId = <span class="number">1</span>;
+
+    it(<span class="string">'has initial state of `new`'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+      assert(game.isNew(userId, gameId));
+    });
+
+  });</code></pre>
+<p>Launch tests in console with <a href="http://mocha.com/">mocha</a>:</p>
+<pre><code>/path/to/project$ mocha</code></pre>
+<p><em>By the way, you can make tests run every time you save a file with
+</em><code>mocha -w</code>.</p>
+<p>And… it is&nbsp;failing:</p>
+<pre><code>  1 failing
+
+  1) Game implemented via state has initial state of `new`:
+
+   TypeError: Object #&lt;Object&gt; has no method &#39;isNew&#39;
+    at ...</code></pre>
+<p>Quickly add a simpliest implementation&nbsp;possible:</p>
+<pre><code class="lang-javascript">
+  <span class="comment">// ./game-state.js</span>
+
+  exports.isNew = isNew;
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isNew</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="literal">true</span>;
+  }</code></pre>
+<p>And mocha tells us we are done with this for&nbsp;now:</p>
+<pre><code>1 passing</code></pre>
+<p>Moving forward. When user starts a game, it becomes <strong>started</strong>.
+The&nbsp;Test:</p>
+<pre><code class="lang-javascript">  <span class="comment">// ./test/test.js</span>
+
+  it(<span class="string">'changes to `started` on game start'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    game.start(userId, gameId);
+
+    assert(game.isStarted(userId, gameId));
+    assert(!game.isNew(userId, gameId));
+  });</code></pre>
+<p>It fails, with a similar TypeError, which is easy to&nbsp;fix:</p>
+<pre><code class="lang-javascript">  <span class="comment">// ./game-state.js</span>
+
+  exports.isStarted = isStarted;
+  exports.start = start;
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isStarted</span><span class="params">()</span> {</span> }
+  <span class="function"><span class="keyword">function</span> <span class="title">start</span><span class="params">()</span> {</span> }</code></pre>
+<p>Which brings us to AssertionError&nbsp;now:</p>
+<pre><code>  1 passing
+  1 failing
+
+  1) Game implemented via state changes to `started` on game start:
+   AssertionError: &quot;undefined&quot; == true
+   ...</code></pre>
+<p>So we create a storage for the state. Implement <code>isStarted</code> and <code>start</code>
+functions and change <code>isNew</code> function, so
+<code>assert(!game.isNew(userId, gameId))</code> does not&nbsp;fail.</p>
+<pre><code class="lang-javascript">  <span class="comment">// ./game-state.js</span>
+
+  <span class="keyword">var</span> state = {};
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isNew</span><span class="params">(userId, gameId)</span> {</span>
+
+    <span class="comment">// this will prevent fails when isNew()</span>
+    <span class="comment">// is called for the user with no state</span>
+    state[userId] = state[userId] || {};
+
+    <span class="keyword">return</span> !state[userId][gameId];
+  }
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isStarted</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    <span class="keyword">return</span> state[userId][gameId] === <span class="string">'started'</span>;
+  }
+
+  <span class="function"><span class="keyword">function</span> <span class="title">start</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    state[userId][gameId] = <span class="string">'started'</span>;
+  }</code></pre>
+<p>Now both our tests pass. We can start games like… everyday. Pretty cool,
+I guess. But it would be even better if we could win a game! Yeah, that
+sounds like something I&#39;ve always&nbsp;wanted:</p>
+<pre><code class="lang-javascript">  <span class="comment">// ./test/test.js</span>
+
+  it(<span class="string">'changes to `finished` on win'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    game.start(userId, gameId);
+    game.win(userId, gameId);
+
+    assert(game.isStarted(userId, gameId));
+    assert(game.isFinished(userId, gameId));
+    assert(game.isWon(userId, gameId));
+    assert(!game.isLost(userId, gameId));
+
+  });</code></pre>
+<p>Moving quickly (under the hood I make it first fail with AssertionError,
+than provide implementation) leads me to&nbsp;this:</p>
+<pre><code class="lang-javascript">  <span class="comment">// ./game-state.js</span>
+
+  exports.isFinished = isFinished;
+  exports.isWon = isWon;
+  exports.win = win;
+
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isFinished</span><span class="params">(userId, gameId)</span> {</span>
+    <span class="keyword">return</span> isWon(userId, gameId) || isLost(userId, gameId);
+  }
+
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isLost</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    <span class="keyword">return</span> state[userId][gameId] === <span class="string">'lost'</span>;
+  }
+
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isStarted</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    <span class="comment">// consider every finished game was started once...</span>
+    <span class="keyword">return</span> _.contains([ <span class="string">"started"</span>, <span class="string">"won"</span>, <span class="string">"lost"</span> ], state[userId][gameId]);
+  }
+
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isWon</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    <span class="keyword">return</span> state[userId][gameId] === <span class="string">'won'</span>;
+  }
+
+
+  <span class="function"><span class="keyword">function</span> <span class="title">win</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    state[userId][gameId] = <span class="string">'won'</span>;
+  }</code></pre>
+<p>Loosing a game is pretty similar to winning, in terms of code, so I leave
+it up to you to&nbsp;imaging.</p>
+<h2>History implementation.&nbsp;Comparison</h2>
+<p>Using same tests (which is kinda great), I&#39;ve made a <em>history</em>-based
+implementation of the solution for the same problem. Idea behind it is:
+“Save every action user makes in a list. Every time game
+state is requested, calculate it based on data about what actions user&nbsp;made.”</p>
+<p>Let&#39;s compare those two&nbsp;implementations.</p>
+<p><strong><span class="caps">TEST</span></strong></p>
+<pre><code class="lang-javascript">  it(<span class="string">'has initial state of `new`'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    assert(game.isNew(userId, gameId));
+  });</code></pre>
+<p><strong><span class="caps">STATE</span>&nbsp;impl</strong></p>
+<pre><code class="lang-javascript">  <span class="keyword">var</span> state = {};
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isNew</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    <span class="keyword">return</span> !state[userId][gameId];
+  }</code></pre>
+<p><strong><span class="caps">HISTORY</span>&nbsp;impl</strong></p>
+<pre><code class="lang-javascript">  <span class="keyword">var</span> history = [];
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isNew</span><span class="params">(userId, gameId)</span> {</span>
+    <span class="comment">// check if user have made *any* actions</span>
+    <span class="keyword">return</span> !_.any(history, <span class="function"><span class="keyword">function</span> <span class="params">(h)</span> {</span>
+      <span class="keyword">return</span> h.userId === userId &amp;&amp; h.gameId === gameId;
+    });
+  }</code></pre>
+<p>Those two are pretty similar. Time complexity of <strong>state impl</strong> will be
+<code>O(1)</code>, because all we need to do is to look up values in two dictionaries
+(js objects). For the <strong>history impl</strong> it is <code>O(n)</code>, where n is a number
+of events. That&#39;s because we need to iterate through all of the events
+until we find one with <code>userId</code> and <code>gameId</code> similar to what was&nbsp;given.</p>
+<p>Next test is about changing a state of the&nbsp;game:</p>
+<p><strong><span class="caps">TEST</span></strong></p>
+<pre><code class="lang-javascript">  it(<span class="string">'changes to `started` on game start'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    game.start(userId, gameId);
+
+    assert(game.isStarted(userId, gameId));
+    assert(!game.isNew(userId, gameId));
+  });</code></pre>
+<p><strong><span class="caps">STATE</span>&nbsp;impl</strong></p>
+<pre><code class="lang-javascript">  <span class="function"><span class="keyword">function</span> <span class="title">start</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    state[userId][gameId] = <span class="string">'started'</span>;
+  }
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isStarted</span><span class="params">(userId, gameId)</span> {</span>
+    state[userId] = state[userId] || {};
+    <span class="keyword">return</span> _.contains([ <span class="string">"started"</span>, <span class="string">"won"</span>, <span class="string">"lost"</span> ], state[userId][gameId]);
+  }</code></pre>
+<p><strong><span class="caps">HISTORY</span>&nbsp;impl</strong></p>
+<pre><code class="lang-javascript">  <span class="function"><span class="keyword">function</span> <span class="title">start</span><span class="params">(userId, gameId)</span> {</span>
+    history.push({
+      userId: userId,
+      gameId: gameId,
+      action: <span class="string">'start'</span>
+    });
+  }
+
+
+  <span class="function"><span class="keyword">function</span> <span class="title">isStarted</span><span class="params">(userId, gameId)</span> {</span>
+    <span class="keyword">return</span> _.any(history, <span class="function"><span class="keyword">function</span> <span class="params">(h)</span> {</span>
+      <span class="keyword">return</span> (
+        h.userId === userId &amp;&amp;
+        h.gameId === gameId &amp;&amp;
+        h.action === <span class="string">'start'</span>
+      )
+    });
+  }</code></pre>
+<p>To change a game state using <strong>state impl</strong> you need to change one value
+in a dictionary. To change game state using <strong>history impl</strong>, you add an
+action to array. Depending on how <code>Array.push()</code> works, <strong>history impl</strong>
+may take <code>O(1) or O(n)</code> time to do this. <code>isStarted()</code> takes same amount
+of time as <code>isNew()</code>.</p>
+<h2>To&nbsp;summarize</h2>
+<pre><code>u - number of users
+g - number of games
+e - number of events
+
+Implementation  | Operation  |  Time
+----------------|------------|--------------
+state           |check state |  O(1)
+history         |check state |  O(e)
+state           |change state|  O(1)
+history         |change state|  O(1) or O(e)
+
+Implementation  | Space Required
+----------------|---------------
+state           | O(u*g)
+history         | O(e)</code></pre>
+<p>In a real world <code>state</code> object we were using for <strong>state impl</strong> and
+<code>history</code> array can be replaced with tables (collections) in&nbsp;database.</p>
+<p>Although from performance point of view <strong>state impl</strong> is slightly better
+than <strong>history impl</strong>, the latter has an obvious advantage in storing
+additional info, e.g. the time of the state transition or user score,
+together with the action&nbsp;itself.</p>
+<p>I personally tend to use <strong>history impl</strong>-like solutions more often.
+Especially when it comes to implementing something with unclear
+requirements. And it is great to use <strong>state impl</strong> solutions for
+caching purposes in case you are not satisfied with <code>O(e)</code> time of check&nbsp;state.</p>
+<p>You can find the code for this article <a href="https://github.com/filipovskii/filipovskii.github.io/tree/master/src/contents/articles/tdd-state-vs-history/code">here</a>.</p>
+<p>More examples of tests in javascript are on&nbsp;github:</p>
+<ul>
+<li><a href="https://github.com/visionmedia/express/tree/master/test">express</a></li>
+<li><a href="https://github.com/kriskowal/q/tree/master/spec">q</a></li>
+<li><a href="https://github.com/jashkenas/underscore/tree/master/test">underscore</a></li>
+</ul>
+<p>That&#39;s it, thanks for your&nbsp;time!</p>
+</section>
+        </article>
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+          var disqus_shortname = 'filipovskiiblog';
+          (function() {
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          
+        </script>
+        <noscript>
+          <Please>enable JavaScript to view the</Please><a href="http://disqus.com/?ref_noscript">
+            <comments>powered by Disqus.</comments></a>
+        </noscript><a href="http://disqus.com" class="dsq-brlink">comments powered by<span class="logo-disqus">
+            <Disqus></Disqus></span></a>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/">« Full blog</a></div>
+        <section class="about"><p>I am yet another <em>software engineer</em>, who likes to ship as fast as
+possible, beautiful code and challenging tasks.</p>
+<p>Look, here I am on <a href="https://github.com/filipovskii">github</a>, <a href="https://twitter.com/filipovskii">twitter</a> and <a href="http://www.linkedin.com/pub/andrey-salomatin/36/878/113">linkedin</a>.</p>
+<p>Thanks for stopping by! <a href="mailto:filipovskii.off@gmail.com">Mail me</a>, if you ought to.</p>
+<p>All characters and events in this work – even those based on real people –
+are entirely fictional.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2013 Andrey Salomatin &mdash; powered by&nbsp;<a href="https://github.com/jnordberg/wintersmith">Wintersmith</a>
+          </p>
+        </section>
+      </div>
+    </footer>
+    <script>
+      var _gaq=[['_setAccount','UA-21702849-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+  </body>
+</html>
