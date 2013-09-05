@@ -45,6 +45,10 @@ describe('Game implemented via state', function () {
       userId = 1,
       gameId = 1;
 
+  beforeEach(function () {
+    game.clear();
+  });
+
   it('has initial state of `new`', function () {
     var userId = 1,
         gameId = 1;
@@ -57,6 +61,17 @@ describe('Game implemented via state', function () {
 
     assert.ok(game.isStarted(userId, gameId));
     assert.ok(!game.isNew(userId, gameId));
+  });
+
+  it('changes to `finished` on win', function () {
+    game.start(userId, gameId);
+    game.win(userId, gameId);
+
+    assert.ok(game.isStarted(userId, gameId), 'game is not started');
+    assert.ok(game.isFinished(userId, gameId));
+    assert.ok(game.isWon(userId, gameId));
+    assert.ok(!game.isLost(userId, gameId));
+
   });
 
 });
