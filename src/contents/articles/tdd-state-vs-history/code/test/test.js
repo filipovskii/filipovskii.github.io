@@ -13,24 +13,24 @@ describe('Game implemented via history', function () {
     var userId = 1,
         gameId = 1;
 
-    assert.ok(game.isNew(userId, gameId));
+    assert(game.isNew(userId, gameId));
   });
 
   it('changes to `started` on game start', function () {
     game.start(userId, gameId);
 
-    assert.ok(game.isStarted(userId, gameId));
-    assert.ok(!game.isNew(userId, gameId));
+    assert(game.isStarted(userId, gameId));
+    assert(!game.isNew(userId, gameId));
   });
 
   it('changes to `finished` on win', function () {
     game.start(userId, gameId);
     game.win(userId, gameId);
 
-    assert.ok(game.isStarted(userId, gameId));
-    assert.ok(game.isFinished(userId, gameId));
-    assert.ok(game.isWon(userId, gameId));
-    assert.ok(!game.isLost(userId, gameId));
+    assert(game.isStarted(userId, gameId));
+    assert(game.isFinished(userId, gameId));
+    assert(game.isWon(userId, gameId));
+    assert(!game.isLost(userId, gameId));
 
   });
 
@@ -53,24 +53,24 @@ describe('Game implemented via state', function () {
     var userId = 1,
         gameId = 1;
 
-    assert.ok(game.isNew(userId, gameId));
+    assert(game.isNew(userId, gameId));
   });
 
   it('changes to `started` on game start', function () {
     game.start(userId, gameId);
 
-    assert.ok(game.isStarted(userId, gameId));
-    assert.ok(!game.isNew(userId, gameId));
+    assert(game.isStarted(userId, gameId));
+    assert(!game.isNew(userId, gameId));
   });
 
   it('changes to `finished` on win', function () {
     game.start(userId, gameId);
     game.win(userId, gameId);
 
-    assert.ok(game.isStarted(userId, gameId), 'game is not started');
-    assert.ok(game.isFinished(userId, gameId));
-    assert.ok(game.isWon(userId, gameId));
-    assert.ok(!game.isLost(userId, gameId));
+    assert(game.isStarted(userId, gameId), 'game is not started');
+    assert(game.isFinished(userId, gameId));
+    assert(game.isWon(userId, gameId));
+    assert(!game.isLost(userId, gameId));
 
   });
 
